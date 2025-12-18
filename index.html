@@ -415,7 +415,8 @@
         }
     }
 
-    // === ОТПРАВКА ЗАКАЗА ===
+    
+  // === ОТПРАВКА ЗАКАЗА В TELEGRAM (ЛИЧКУ) ===
     window.sendOrder = function() {
         const comment = document.getElementById('order-comment').value;
         
@@ -439,12 +440,19 @@
             msg += `\n\n💬 Комментарий клиента:\n${comment}`;
         }
         
-        // Ваш номер телефона
-        const phone = "79000000000"; 
-        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+        // --- НАСТРОЙКИ ---
+        // Впишите сюда ваш НИК в Telegram (без собачки @)
+        // Например, если ваш ник @electric_master, пишите просто "electric_master"
+        const myUsername = "Llosta"; 
         
+        // Формируем ссылку
+        const url = `https://t.me/${myUsername}?text=${encodeURIComponent(msg)}`;
+        
+        // Закрываем мини-приложение и открываем чат с вами
         tg.close();
-        setTimeout(() => { window.open(url, '_blank'); }, 100);
+        
+        // Используем специальный метод Telegram для открытия ссылок внутри приложения
+        tg.openTelegramLink(url);
     }
 
     init();
