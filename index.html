@@ -22,170 +22,105 @@
             font-family: -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-secondary-bg-color);
             color: var(--tg-theme-text-color);
-            padding-bottom: 80px; /* Отступ под нижнее меню */
+            padding-bottom: 90px; /* Увеличил отступ, чтобы контент не перекрывался меню */
             overflow-x: hidden;
         }
 
-        /* === ЭКРАНЫ (ВКЛАДКИ) === */
-        .tab-screen {
-            display: none;
-            padding-bottom: 20px;
-        }
-        .tab-screen.active {
-            display: block;
-            animation: fadeIn 0.2s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* === ЭКРАНЫ === */
+        .tab-screen { display: none; }
+        .tab-screen.active { display: block; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* === ШАПКА === */
-        .header {
-            background-color: var(--tg-theme-bg-color);
-            padding: 15px;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
+        .header { background-color: var(--tg-theme-bg-color); padding: 15px; margin-bottom: 10px; }
         .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
         .header p { margin: 5px 0 0; font-size: 13px; color: var(--tg-theme-hint-color); }
 
-        /* === НАВИГАЦИЯ КАТЕГОРИЙ (ВЕРХНЯЯ) === */
+        /* === НАВИГАЦИЯ КАТЕГОРИЙ === */
         .nav-cats {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background-color: var(--tg-theme-bg-color);
-            display: flex;
-            overflow-x: auto;
-            padding: 10px 15px;
-            gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            scrollbar-width: none;
+            position: sticky; top: 0; z-index: 100; background-color: var(--tg-theme-bg-color);
+            display: flex; overflow-x: auto; padding: 10px 15px; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); scrollbar-width: none;
         }
         .nav-cats::-webkit-scrollbar { display: none; }
 
         .cat-btn {
-            white-space: nowrap;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background-color: var(--tg-theme-secondary-bg-color);
-            color: var(--tg-theme-text-color);
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
+            white-space: nowrap; padding: 8px 16px; border-radius: 20px;
+            background-color: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color);
+            font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: 0.2s;
         }
-        .cat-btn.active {
-            background-color: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-        }
+        .cat-btn.active { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); }
 
         /* === СПИСОК УСЛУГ === */
         .content { padding: 15px; }
         .section-title { font-size: 18px; font-weight: 700; margin: 25px 0 10px; }
 
         .card {
-            background-color: var(--tg-theme-bg-color);
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            background-color: var(--tg-theme-bg-color); border-radius: 16px; padding: 12px 16px;
+            margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .card-info { flex: 1; padding-right: 10px; }
-        .card-title { font-size: 15px; font-weight: 500; line-height: 1.2; margin-bottom: 6px; }
+        .card-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
         .card-price { font-size: 14px; font-weight: 700; }
         .card-unit { font-size: 12px; font-weight: 400; color: var(--tg-theme-hint-color); }
 
         /* === ЭЛЕМЕНТЫ СМЕТЫ === */
-        .estimate-empty {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--tg-theme-hint-color);
-        }
+        .estimate-empty { text-align: center; padding: 50px 20px; color: var(--tg-theme-hint-color); }
+        
         .estimate-total {
-            background: var(--tg-theme-bg-color);
-            padding: 20px;
-            border-radius: 16px;
-            margin: 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: var(--tg-theme-bg-color); padding: 20px; border-radius: 16px; margin: 15px;
+            text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .total-label { font-size: 14px; color: var(--tg-theme-hint-color); }
         .total-sum { font-size: 32px; font-weight: 800; color: var(--tg-theme-button-color); margin: 5px 0; }
 
+        /* === ПОЛЕ КОММЕНТАРИЯ === */
+        .input-block {
+            background: var(--tg-theme-bg-color); border-radius: 16px; padding: 15px; margin: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .input-label { font-size: 13px; font-weight: 600; color: var(--tg-theme-hint-color); margin-bottom: 10px; display: block; }
+        .text-input {
+            width: 100%; border: 1px solid #e0e0e0; background: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px; padding: 12px; font-size: 16px; color: var(--tg-theme-text-color);
+            resize: none; outline: none; box-sizing: border-box; font-family: inherit;
+        }
+        .text-input:focus { border-color: var(--tg-theme-button-color); }
+
+        /* === ГЛАВНАЯ КНОПКА (ВНУТРИ СТРАНИЦЫ) === */
+        .main-action-btn {
+            width: calc(100% - 30px); margin: 0 15px 20px 15px; padding: 18px;
+            background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color);
+            border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
+            text-align: center; box-shadow: 0 4px 12px rgba(36, 129, 204, 0.3);
+            display: block; /* Показываем блоком */
+        }
+        .main-action-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* === КРЕСТИК УДАЛЕНИЯ === */
         .btn-delete {
-            background: rgba(255, 59, 48, 0.1);
-            color: #ff3b30;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
+            background: rgba(255, 59, 48, 0.1); color: #ff3b30; width: 32px; height: 32px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
         }
 
-        /* === КОНТРОЛЛЕРЫ (+/-) === */
+        /* === КОНТРОЛЛЕРЫ === */
         .stepper { display: flex; align-items: center; background: var(--tg-theme-secondary-bg-color); border-radius: 12px; height: 36px; }
         .step-btn { width: 32px; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--tg-theme-button-color); cursor: pointer; }
         .step-val { min-width: 24px; text-align: center; font-size: 15px; font-weight: 600; }
         .add-btn { height: 36px; padding: 0 14px; background-color: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-button-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; cursor: pointer; }
 
-        /* === НИЖНЕЕ МЕНЮ (BOTTOM BAR) === */
+        /* === НИЖНЕЕ МЕНЮ === */
         .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px; /* Высота меню */
-            background-color: var(--tg-theme-bg-color);
-            border-top: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 500;
-            padding-bottom: env(safe-area-inset-bottom); /* Для iPhone без кнопки */
+            position: fixed; bottom: 0; left: 0; right: 0; height: 60px;
+            background-color: var(--tg-theme-bg-color); border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex; justify-content: space-around; align-items: center; z-index: 500;
+            padding-bottom: env(safe-area-inset-bottom);
         }
-        
-        .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--tg-theme-hint-color);
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--tg-theme-hint-color); font-size: 11px; font-weight: 500; cursor: pointer; }
         .nav-item.active { color: var(--tg-theme-button-color); }
         .nav-icon { font-size: 22px; margin-bottom: 2px; }
-        
-        /* Бадж количества в меню */
-        .badge {
-            position: absolute;
-            top: 5px;
-            margin-left: 15px;
-            background: #ff3b30;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 10px;
-            display: none;
-        }
+        .badge { position: absolute; top: 5px; margin-left: 15px; background: #ff3b30; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; display: none; }
         .badge.visible { display: inline-block; }
-
     </style>
 </head>
 <body>
@@ -193,14 +128,10 @@
     <!-- ЭКРАН 1: КАТАЛОГ -->
     <div id="screen-catalog" class="tab-screen active">
         <div class="header">
-            <h1>ЭлектроПрофи ⚡</h1>
+            <h1>⚡Севастополь Электро⚡</h1>
             <p>Выберите услуги из каталога</p>
         </div>
-
-        <!-- Категории -->
         <div class="nav-cats" id="nav-cats"></div>
-
-        <!-- Список -->
         <div class="content" id="catalog-list"></div>
     </div>
 
@@ -208,11 +139,25 @@
     <div id="screen-estimate" class="tab-screen">
         <div class="header">
             <h1>Ваша смета 📝</h1>
-            <p>Проверьте список перед заказом</p>
+            <p>Проверьте список и оформите заявку</p>
         </div>
 
         <div id="estimate-content">
-            <!-- Сюда JS вставит список или "Пусто" -->
+            <!-- Сюда JS вставит список -->
+        </div>
+        
+        <!-- Блок оформления заказа (появится, если есть товары) -->
+        <div id="order-block" style="display:none;">
+            <!-- Поле комментария -->
+            <div class="input-block">
+                <label class="input-label">Комментарий к заказу (Адрес, Телефон, Время):</label>
+                <textarea id="order-comment" class="text-input" rows="3" placeholder="Пример: ул. Ленина 5, кв 10. Удобно в субботу..."></textarea>
+            </div>
+            
+            <!-- Большая кнопка -->
+            <button class="main-action-btn" onclick="sendOrder()">
+                ОТПРАВИТЬ ЗАЯВКУ В WHATSAPP
+            </button>
         </div>
     </div>
 
@@ -232,10 +177,20 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
-    tg.MainButton.textColor = "#ffffff";
-    tg.MainButton.color = "#2481cc";
+    
+    // Переменные цветов для совместимости
+    const themeParams = tg.themeParams;
+    const btnColor = themeParams.button_color || "#2481cc";
+    const btnText = themeParams.button_text_color || "#ffffff";
+    
+    tg.MainButton.textColor = btnText;
+    tg.MainButton.color = btnColor;
 
-    // == БАЗА ДАННЫХ (без изменений) ==
+    // ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КНОПКИ В CSS ЧЕРЕЗ JS (для цвета темы)
+    document.documentElement.style.setProperty('--tg-theme-button-color', btnColor);
+    document.documentElement.style.setProperty('--tg-theme-button-text-color', btnText);
+
+    // == БАЗА ДАННЫХ ==
     const database = [
         {
             id: "finish",
@@ -301,7 +256,7 @@
         const listContainer = document.getElementById('catalog-list');
 
         database.forEach((cat, index) => {
-            // Категории вверху
+            // Кнопки категорий
             const btn = document.createElement('button');
             btn.className = `cat-btn ${index === 0 ? 'active' : ''}`;
             btn.innerText = cat.title;
@@ -338,39 +293,31 @@
     // === УПРАВЛЕНИЕ ВКЛАДКАМИ ===
     window.switchTab = function(tabName) {
         currentTab = tabName;
-        
-        // Переключение видимости экранов
         document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
         document.getElementById(`screen-${tabName}`).classList.add('active');
-
-        // Активность кнопок меню
+        
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        // Находим нужную кнопку (по порядку)
         const navIndex = tabName === 'catalog' ? 0 : 1;
         document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
 
-        if (tabName === 'estimate') {
-            renderEstimate();
-        }
-        
+        if (tabName === 'estimate') renderEstimate();
         updateMainButton();
     }
 
     // === ОТРИСОВКА СМЕТЫ ===
     function renderEstimate() {
         const container = document.getElementById('estimate-content');
+        const orderBlock = document.getElementById('order-block');
         let total = 0;
         let html = '';
         let hasItems = false;
 
-        // Собираем данные
         database.forEach(cat => {
             cat.items.forEach(item => {
                 if (cart[item.id] > 0) {
                     hasItems = true;
                     const sum = cart[item.id] * item.price;
                     total += sum;
-                    
                     html += `
                     <div class="card">
                         <div class="card-info">
@@ -386,20 +333,21 @@
         if (!hasItems) {
             container.innerHTML = `<div class="estimate-empty">
                 <h3>Смета пуста 😕</h3>
-                <p>Перейдите в каталог и добавьте услуги</p>
+                <p>Добавьте услуги в каталоге</p>
             </div>`;
+            orderBlock.style.display = 'none';
         } else {
-            // Добавляем ИТОГО сверху
             const totalBlock = `
             <div class="estimate-total">
-                <div class="total-label">Предварительная стоимость</div>
+                <div style="font-size:13px; color:#888;">Итоговая стоимость:</div>
                 <div class="total-sum">${total.toLocaleString('ru-RU')} ₽</div>
             </div>`;
             container.innerHTML = totalBlock + '<div class="content">' + html + '</div>';
+            orderBlock.style.display = 'block'; // Показываем форму и кнопку
         }
     }
 
-    // === ЛОГИКА КОРЗИНЫ ===
+    // === ЛОГИКА ===
     function renderControl(id) {
         const qty = cart[id] || 0;
         if (qty === 0) return `<div class="add-btn" onclick="update(${id}, 1)">Добавить</div>`;
@@ -417,13 +365,10 @@
         cart[id] += delta;
         if (cart[id] <= 0) delete cart[id];
 
-        // Обновляем кнопку в каталоге
         const ctrl = document.getElementById(`ctrl-${id}`);
         if (ctrl) ctrl.innerHTML = renderControl(id);
 
-        // Если мы в смете, перерисовываем смету
         if (currentTab === 'estimate') renderEstimate();
-
         updateMainButton();
         updateBadge();
     };
@@ -431,10 +376,8 @@
     window.removeItem = function(id) {
         tg.HapticFeedback.notificationOccurred('warning');
         delete cart[id];
-        // Сброс в каталоге
         const ctrl = document.getElementById(`ctrl-${id}`);
         if (ctrl) ctrl.innerHTML = renderControl(id);
-        
         renderEstimate();
         updateMainButton();
         updateBadge();
@@ -444,8 +387,7 @@
         const count = Object.values(cart).reduce((a, b) => a + b, 0);
         const badge = document.getElementById('cart-badge');
         badge.innerText = count;
-        if (count > 0) badge.classList.add('visible');
-        else badge.classList.remove('visible');
+        if (count > 0) badge.classList.add('visible'); else badge.classList.remove('visible');
     }
 
     function updateMainButton() {
@@ -459,21 +401,25 @@
             return;
         }
 
+        // Системная кнопка Telegram (дублирует функционал)
         if (currentTab === 'catalog') {
-            tg.MainButton.setText(`СМЕТА: ${total.toLocaleString()} ₽ (Перейти)`);
+            tg.MainButton.setText(`В КОРЗИНУ: ${total.toLocaleString()} ₽`);
             tg.MainButton.show();
-            // Нажатие в каталоге ведет в смету
             tg.MainButton.onClick(() => switchTab('estimate'));
         } else {
-            tg.MainButton.setText(`ЗАКАЗАТЬ В WHATSAPP`);
+            tg.MainButton.setText(`ОТПРАВИТЬ ЗАЯВКУ`);
             tg.MainButton.show();
-            // Нажатие в смете ведет к отправке
+            // Удаляем старые слушатели и ставим новый
+            tg.MainButton.offClick(switchTab); 
             tg.MainButton.onClick(sendOrder);
         }
     }
 
-    function sendOrder() {
-        let msg = "Здравствуйте! Моя предварительная смета:\n\n";
+    // === ОТПРАВКА ЗАКАЗА ===
+    window.sendOrder = function() {
+        const comment = document.getElementById('order-comment').value;
+        
+        let msg = "⚡ Новая заявка на электромонтаж:\n\n";
         let total = 0;
         database.forEach(cat => {
             const items = cat.items.filter(i => cart[i.id]);
@@ -486,9 +432,15 @@
                 });
             }
         });
+        
         msg += `\n💰 ИТОГО: ${total.toLocaleString()} руб.`;
         
-        const phone = "79000000000"; // Замените на ваш
+        if (comment) {
+            msg += `\n\n💬 Комментарий клиента:\n${comment}`;
+        }
+        
+        // Ваш номер телефона
+        const phone = "79000000000"; 
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
         
         tg.close();
@@ -497,6 +449,5 @@
 
     init();
 </script>
-
 </body>
 </html>
