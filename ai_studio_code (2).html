@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Электромонтаж 2025</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #000000;
+            --tg-theme-hint-color: #838383;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f0f2f5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-secondary-bg-color);
+            color: var(--tg-theme-text-color);
+            padding-bottom: 80px; /* Отступ под нижнее меню */
+            overflow-x: hidden;
+        }
+
+        /* === ЭКРАНЫ (ВКЛАДКИ) === */
+        .tab-screen {
+            display: none;
+            padding-bottom: 20px;
+        }
+        .tab-screen.active {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === ШАПКА === */
+        .header {
+            background-color: var(--tg-theme-bg-color);
+            padding: 15px;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+        .header p { margin: 5px 0 0; font-size: 13px; color: var(--tg-theme-hint-color); }
+
+        /* === НАВИГАЦИЯ КАТЕГОРИЙ (ВЕРХНЯЯ) === */
+        .nav-cats {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--tg-theme-bg-color);
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 15px;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            scrollbar-width: none;
+        }
+        .nav-cats::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            white-space: nowrap;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: var(--tg-theme-secondary-bg-color);
+            color: var(--tg-theme-text-color);
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn.active {
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+        }
+
+        /* === СПИСОК УСЛУГ === */
+        .content { padding: 15px; }
+        .section-title { font-size: 18px; font-weight: 700; margin: 25px 0 10px; }
+
+        .card {
+            background-color: var(--tg-theme-bg-color);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .card-info { flex: 1; padding-right: 10px; }
+        .card-title { font-size: 15px; font-weight: 500; line-height: 1.2; margin-bottom: 6px; }
+        .card-price { font-size: 14px; font-weight: 700; }
+        .card-unit { font-size: 12px; font-weight: 400; color: var(--tg-theme-hint-color); }
+
+        /* === ЭЛЕМЕНТЫ СМЕТЫ === */
+        .estimate-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--tg-theme-hint-color);
+        }
+        .estimate-total {
+            background: var(--tg-theme-bg-color);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .total-label { font-size: 14px; color: var(--tg-theme-hint-color); }
+        .total-sum { font-size: 32px; font-weight: 800; color: var(--tg-theme-button-color); margin: 5px 0; }
+
+        .btn-delete {
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* === КОНТРОЛЛЕРЫ (+/-) === */
+        .stepper { display: flex; align-items: center; background: var(--tg-theme-secondary-bg-color); border-radius: 12px; height: 36px; }
+        .step-btn { width: 32px; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--tg-theme-button-color); cursor: pointer; }
+        .step-val { min-width: 24px; text-align: center; font-size: 15px; font-weight: 600; }
+        .add-btn { height: 36px; padding: 0 14px; background-color: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-button-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+        /* === НИЖНЕЕ МЕНЮ (BOTTOM BAR) === */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px; /* Высота меню */
+            background-color: var(--tg-theme-bg-color);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 500;
+            padding-bottom: env(safe-area-inset-bottom); /* Для iPhone без кнопки */
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--tg-theme-hint-color);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .nav-item.active { color: var(--tg-theme-button-color); }
+        .nav-icon { font-size: 22px; margin-bottom: 2px; }
+        
+        /* Бадж количества в меню */
+        .badge {
+            position: absolute;
+            top: 5px;
+            margin-left: 15px;
+            background: #ff3b30;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: none;
+        }
+        .badge.visible { display: inline-block; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ЭКРАН 1: КАТАЛОГ -->
+    <div id="screen-catalog" class="tab-screen active">
+        <div class="header">
+            <h1>ЭлектроПрофи ⚡</h1>
+            <p>Выберите услуги из каталога</p>
+        </div>
+
+        <!-- Категории -->
+        <div class="nav-cats" id="nav-cats"></div>
+
+        <!-- Список -->
+        <div class="content" id="catalog-list"></div>
+    </div>
+
+    <!-- ЭКРАН 2: СМЕТА -->
+    <div id="screen-estimate" class="tab-screen">
+        <div class="header">
+            <h1>Ваша смета 📝</h1>
+            <p>Проверьте список перед заказом</p>
+        </div>
+
+        <div id="estimate-content">
+            <!-- Сюда JS вставит список или "Пусто" -->
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="bottom-bar">
+        <div class="nav-item active" onclick="switchTab('catalog')">
+            <div class="nav-icon">📋</div>
+            <div>Каталог</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('estimate')" style="position: relative;">
+            <div class="nav-icon">💰</div>
+            <div>Смета</div>
+            <div class="badge" id="cart-badge">0</div>
+        </div>
+    </div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.MainButton.textColor = "#ffffff";
+    tg.MainButton.color = "#2481cc";
+
+    // == БАЗА ДАННЫХ (без изменений) ==
+    const database = [
+        {
+            id: "finish",
+            title: "Чистовая электрика",
+            items: [
+                { id: 1, name: "Установка розетки / выключателя (в подрозетник)", price: 350, unit: "шт" },
+                { id: 2, name: "Установка накладной розетки (открытая)", price: 450, unit: "шт" },
+                { id: 3, name: "Подключение варочной панели (1ф/3ф)", price: 1200, unit: "шт" },
+                { id: 4, name: "Подключение дух. шкафа", price: 1000, unit: "шт" },
+                { id: 5, name: "Установка силовой розетки 380В (3 фазы)", price: 1500, unit: "шт" },
+                { id: 6, name: "Монтаж терморегулятора теплого пола", price: 600, unit: "шт" }
+            ]
+        },
+        {
+            id: "light",
+            title: "Освещение & LED",
+            items: [
+                { id: 10, name: "Монтаж люстры (крюк/планка)", price: 1500, unit: "шт" },
+                { id: 11, name: "Светильник 'Армстронг' / Офисный", price: 500, unit: "шт" },
+                { id: 12, name: "Точечный светильник (врезка+подкл.)", price: 450, unit: "шт" },
+                { id: 13, name: "LED лента (монтаж в профиль)", price: 450, unit: "м" },
+                { id: 14, name: "LED лента (наклейка)", price: 300, unit: "м" },
+                { id: 15, name: "Монтаж блока питания / драйвера", price: 800, unit: "шт" }
+            ]
+        },
+        {
+            id: "diag",
+            title: "Диагностика",
+            items: [
+                { id: 20, name: "Поиск неисправности (мин. выезд)", price: 3000, unit: "усл." },
+                { id: 21, name: "Ремонт обрыва в стене (без отделки)", price: 1500, unit: "точка" },
+                { id: 22, name: "Переборка распаечной коробки", price: 1200, unit: "шт" }
+            ]
+        },
+        {
+            id: "rough",
+            title: "Черновые работы",
+            items: [
+                { id: 30, name: "Штробление (бетон)", price: 600, unit: "м" },
+                { id: 31, name: "Штробление (кирпич/блок)", price: 400, unit: "м" },
+                { id: 32, name: "Вмазка подрозетника", price: 350, unit: "шт" },
+                { id: 33, name: "Прокладка кабеля (в гофре)", price: 150, unit: "м" }
+            ]
+        },
+        {
+            id: "shield",
+            title: "Щит и Автоматика",
+            items: [
+                { id: 40, name: "Установка автомата 1П", price: 350, unit: "шт" },
+                { id: 41, name: "Установка УЗО / Диф.автомата", price: 600, unit: "шт" },
+                { id: 42, name: "Кросс-модуль / Шины", price: 800, unit: "шт" },
+                { id: 43, name: "Монтаж счетчика", price: 1500, unit: "шт" }
+            ]
+        }
+    ];
+
+    let cart = {};
+    let currentTab = 'catalog';
+
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    function init() {
+        const catContainer = document.getElementById('nav-cats');
+        const listContainer = document.getElementById('catalog-list');
+
+        database.forEach((cat, index) => {
+            // Категории вверху
+            const btn = document.createElement('button');
+            btn.className = `cat-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerText = cat.title;
+            btn.onclick = () => {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`cat-${cat.id}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+            catContainer.appendChild(btn);
+
+            // Секции
+            const section = document.createElement('div');
+            section.id = `cat-${cat.id}`;
+            section.innerHTML = `<div class="section-title">${cat.title}</div>`;
+            
+            cat.items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-info">
+                        <div class="card-title">${item.name}</div>
+                        <div class="card-price">${item.price} ₽ <span class="card-unit">/ ${item.unit}</span></div>
+                    </div>
+                    <div id="ctrl-${item.id}">
+                        ${renderControl(item.id)}
+                    </div>
+                `;
+                section.appendChild(card);
+            });
+            listContainer.appendChild(section);
+        });
+    }
+
+    // === УПРАВЛЕНИЕ ВКЛАДКАМИ ===
+    window.switchTab = function(tabName) {
+        currentTab = tabName;
+        
+        // Переключение видимости экранов
+        document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${tabName}`).classList.add('active');
+
+        // Активность кнопок меню
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        // Находим нужную кнопку (по порядку)
+        const navIndex = tabName === 'catalog' ? 0 : 1;
+        document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+
+        if (tabName === 'estimate') {
+            renderEstimate();
+        }
+        
+        updateMainButton();
+    }
+
+    // === ОТРИСОВКА СМЕТЫ ===
+    function renderEstimate() {
+        const container = document.getElementById('estimate-content');
+        let total = 0;
+        let html = '';
+        let hasItems = false;
+
+        // Собираем данные
+        database.forEach(cat => {
+            cat.items.forEach(item => {
+                if (cart[item.id] > 0) {
+                    hasItems = true;
+                    const sum = cart[item.id] * item.price;
+                    total += sum;
+                    
+                    html += `
+                    <div class="card">
+                        <div class="card-info">
+                            <div class="card-title">${item.name}</div>
+                            <div class="card-price">${cart[item.id]} ${item.unit} × ${item.price} = <b>${sum} ₽</b></div>
+                        </div>
+                        <div class="btn-delete" onclick="removeItem(${item.id})">✕</div>
+                    </div>`;
+                }
+            });
+        });
+
+        if (!hasItems) {
+            container.innerHTML = `<div class="estimate-empty">
+                <h3>Смета пуста 😕</h3>
+                <p>Перейдите в каталог и добавьте услуги</p>
+            </div>`;
+        } else {
+            // Добавляем ИТОГО сверху
+            const totalBlock = `
+            <div class="estimate-total">
+                <div class="total-label">Предварительная стоимость</div>
+                <div class="total-sum">${total.toLocaleString('ru-RU')} ₽</div>
+            </div>`;
+            container.innerHTML = totalBlock + '<div class="content">' + html + '</div>';
+        }
+    }
+
+    // === ЛОГИКА КОРЗИНЫ ===
+    function renderControl(id) {
+        const qty = cart[id] || 0;
+        if (qty === 0) return `<div class="add-btn" onclick="update(${id}, 1)">Добавить</div>`;
+        return `
+            <div class="stepper">
+                <div class="step-btn" onclick="update(${id}, -1)">−</div>
+                <div class="step-val">${qty}</div>
+                <div class="step-btn" onclick="update(${id}, 1)">+</div>
+            </div>`;
+    }
+
+    window.update = function(id, delta) {
+        tg.HapticFeedback.impactOccurred('light');
+        if (!cart[id]) cart[id] = 0;
+        cart[id] += delta;
+        if (cart[id] <= 0) delete cart[id];
+
+        // Обновляем кнопку в каталоге
+        const ctrl = document.getElementById(`ctrl-${id}`);
+        if (ctrl) ctrl.innerHTML = renderControl(id);
+
+        // Если мы в смете, перерисовываем смету
+        if (currentTab === 'estimate') renderEstimate();
+
+        updateMainButton();
+        updateBadge();
+    };
+
+    window.removeItem = function(id) {
+        tg.HapticFeedback.notificationOccurred('warning');
+        delete cart[id];
+        // Сброс в каталоге
+        const ctrl = document.getElementById(`ctrl-${id}`);
+        if (ctrl) ctrl.innerHTML = renderControl(id);
+        
+        renderEstimate();
+        updateMainButton();
+        updateBadge();
+    }
+
+    function updateBadge() {
+        const count = Object.values(cart).reduce((a, b) => a + b, 0);
+        const badge = document.getElementById('cart-badge');
+        badge.innerText = count;
+        if (count > 0) badge.classList.add('visible');
+        else badge.classList.remove('visible');
+    }
+
+    function updateMainButton() {
+        let total = 0;
+        database.forEach(cat => cat.items.forEach(i => {
+            if (cart[i.id]) total += cart[i.id] * i.price;
+        }));
+
+        if (total === 0) {
+            tg.MainButton.hide();
+            return;
+        }
+
+        if (currentTab === 'catalog') {
+            tg.MainButton.setText(`СМЕТА: ${total.toLocaleString()} ₽ (Перейти)`);
+            tg.MainButton.show();
+            // Нажатие в каталоге ведет в смету
+            tg.MainButton.onClick(() => switchTab('estimate'));
+        } else {
+            tg.MainButton.setText(`ЗАКАЗАТЬ В WHATSAPP`);
+            tg.MainButton.show();
+            // Нажатие в смете ведет к отправке
+            tg.MainButton.onClick(sendOrder);
+        }
+    }
+
+    function sendOrder() {
+        let msg = "Здравствуйте! Моя предварительная смета:\n\n";
+        let total = 0;
+        database.forEach(cat => {
+            const items = cat.items.filter(i => cart[i.id]);
+            if (items.length) {
+                msg += `🔹 ${cat.title}:\n`;
+                items.forEach(i => {
+                    const sum = cart[i.id] * i.price;
+                    total += sum;
+                    msg += `- ${i.name}: ${cart[i.id]} ${i.unit} (${sum}₽)\n`;
+                });
+            }
+        });
+        msg += `\n💰 ИТОГО: ${total.toLocaleString()} руб.`;
+        
+        const phone = "79000000000"; // Замените на ваш
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+        
+        tg.close();
+        setTimeout(() => { window.open(url, '_blank'); }, 100);
+    }
+
+    init();
+</script>
+
+</body>
+</html>
