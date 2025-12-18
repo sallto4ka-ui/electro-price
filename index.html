@@ -3,231 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Электромонтаж 2025</title>
+    <title>ЭлектроПрофи App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Иконки и Шрифты -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-text-color: #000000;
-            --tg-theme-hint-color: #838383;
-            --tg-theme-link-color: #2481cc;
-            --tg-theme-button-color: #2481cc;
-            --tg-theme-button-text-color: #ffffff;
-            --tg-theme-secondary-bg-color: #f0f2f5;
+            /* Цвета из темы Telegram */
+            --tg-bg: var(--tg-theme-bg-color, #ffffff);
+            --tg-text: var(--tg-theme-text-color, #000000);
+            --tg-hint: var(--tg-theme-hint-color, #999999);
+            --tg-link: var(--tg-theme-link-color, #2481cc);
+            --tg-btn: var(--tg-theme-button-color, #2481cc);
+            --tg-btn-text: var(--tg-theme-button-text-color, #ffffff);
+            --tg-sec-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+
+            /* Кастомные стили */
+            --radius: 16px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.05);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            --anim: 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
+        /* Темная тема - коррекция */
+        body.dark-mode {
+            --glass-bg: rgba(30, 30, 30, 0.85);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-secondary-bg-color);
-            color: var(--tg-theme-text-color);
-            padding-bottom: 90px; /* Увеличил отступ, чтобы контент не перекрывался меню */
+            margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--tg-sec-bg);
+            color: var(--tg-text);
+            padding-bottom: 100px; /* Место под кнопку */
             overflow-x: hidden;
         }
 
-        /* === ЭКРАНЫ === */
-        .tab-screen { display: none; }
-        .tab-screen.active { display: block; animation: fadeIn 0.2s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* === ШАПКА === */
-        .header { background-color: var(--tg-theme-bg-color); padding: 15px; margin-bottom: 10px; }
-        .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
-        .header p { margin: 5px 0 0; font-size: 13px; color: var(--tg-theme-hint-color); }
-
-        /* === НАВИГАЦИЯ КАТЕГОРИЙ === */
-        .nav-cats {
-            position: sticky; top: 0; z-index: 100; background-color: var(--tg-theme-bg-color);
-            display: flex; overflow-x: auto; padding: 10px 15px; gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); scrollbar-width: none;
+        /* === ФОНОВЫЕ ПЯТНА (Градиент) === */
+        .blob {
+            position: fixed; width: 300px; height: 300px;
+            background: var(--tg-btn); opacity: 0.15;
+            filter: blur(90px); border-radius: 50%; z-index: -1;
+            animation: float 10s infinite ease-in-out;
         }
-        .nav-cats::-webkit-scrollbar { display: none; }
+        .blob-1 { top: -100px; left: -100px; }
+        .blob-2 { bottom: -100px; right: -100px; animation-delay: -5s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 50px); } }
 
-        .cat-btn {
-            white-space: nowrap; padding: 8px 16px; border-radius: 20px;
-            background-color: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color);
-            font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: 0.2s;
+        /* === HEADER === */
+        .header { padding: 20px 20px 10px 20px; }
+        .header h1 { margin: 0; font-size: 26px; font-weight: 800; line-height: 1.1; }
+        .header p { margin: 6px 0 0; color: var(--tg-hint); font-size: 14px; }
+
+        /* === SEARCH === */
+        .search-wrap { padding: 0 20px 15px 20px; position: sticky; top: 0; z-index: 90; background: var(--tg-sec-bg); }
+        .search-box {
+            position: relative; width: 100%;
         }
-        .cat-btn.active { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); }
-
-        /* === СПИСОК УСЛУГ === */
-        .content { padding: 15px; }
-        .section-title { font-size: 18px; font-weight: 700; margin: 25px 0 10px; }
-
-        .card {
-            background-color: var(--tg-theme-bg-color); border-radius: 16px; padding: 12px 16px;
-            margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        .search-input {
+            width: 100%; padding: 12px 15px 12px 45px;
+            border-radius: 14px; border: none; outline: none;
+            background: var(--tg-bg); color: var(--tg-text);
+            font-size: 15px; box-shadow: var(--shadow);
+            transition: var(--anim);
         }
-        .card-info { flex: 1; padding-right: 10px; }
-        .card-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
-        .card-price { font-size: 14px; font-weight: 700; }
-        .card-unit { font-size: 12px; font-weight: 400; color: var(--tg-theme-hint-color); }
+        .search-input:focus { box-shadow: 0 0 0 2px var(--tg-btn); }
+        .search-icon {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: var(--tg-hint);
+        }
 
-        /* === ЭЛЕМЕНТЫ СМЕТЫ === */
-        .estimate-empty { text-align: center; padding: 50px 20px; color: var(--tg-theme-hint-color); }
+        /* === TABS (Categories) === */
+        .tabs-wrap {
+            padding: 5px 20px 15px 20px; display: flex; gap: 10px;
+            overflow-x: auto; scrollbar-width: none;
+            position: sticky; top: 55px; z-index: 89;
+            background: var(--tg-sec-bg); /* Подложка, чтобы не просвечивало при скролле */
+            mask-image: linear-gradient(90deg, #000 90%, transparent); /* Fade effect справа */
+        }
+        .tabs-wrap::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            padding: 8px 16px; border-radius: 20px;
+            background: var(--tg-bg); color: var(--tg-text);
+            font-size: 13px; font-weight: 600; white-space: nowrap;
+            border: 1px solid transparent; box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 6px;
+            transition: var(--anim); opacity: 0.8;
+        }
+        .tab-btn.active {
+            background: var(--tg-btn); color: var(--tg-btn-text);
+            opacity: 1; transform: scale(1.05);
+        }
+
+        /* === LIST === */
+        .list-wrap { padding: 0 20px; }
+        .category-block { margin-bottom: 25px; }
+        .cat-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; padding-left: 5px; }
+
+        .item-card {
+            background: var(--tg-bg);
+            border-radius: var(--radius);
+            padding: 15px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--shadow); border: 1px solid transparent;
+            transition: var(--anim);
+        }
+        .item-card.has-qty {
+            border-color: var(--tg-btn);
+            background: rgba(36, 129, 204, 0.05); /* Легкая подсветка */
+        }
+        /* Адаптация подсветки для темной темы */
+        body.dark-mode .item-card.has-qty { background: rgba(36, 129, 204, 0.15); }
+
+        .item-info { flex: 1; padding-right: 15px; }
+        .item-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; line-height: 1.3; }
+        .item-price { font-size: 14px; font-weight: 700; color: var(--tg-text); }
+        .item-unit { font-size: 12px; color: var(--tg-hint); font-weight: 400; }
+
+        /* CONTROLS (+ / -) */
+        .ctrl { display: flex; align-items: center; gap: 0; background: var(--tg-sec-bg); border-radius: 12px; padding: 2px; }
+        .ctrl-btn {
+            width: 32px; height: 32px; border: none; background: transparent;
+            color: var(--tg-btn); font-size: 18px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 8px;
+        }
+        .ctrl-btn:active { background: rgba(0,0,0,0.1); }
+        .ctrl-val { width: 28px; text-align: center; font-size: 14px; font-weight: 600; }
         
-        .estimate-total {
-            background: var(--tg-theme-bg-color); padding: 20px; border-radius: 16px; margin: 15px;
-            text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .total-sum { font-size: 32px; font-weight: 800; color: var(--tg-theme-button-color); margin: 5px 0; }
-
-        /* === ПОЛЕ КОММЕНТАРИЯ === */
-        .input-block {
-            background: var(--tg-theme-bg-color); border-radius: 16px; padding: 15px; margin: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-        .input-label { font-size: 13px; font-weight: 600; color: var(--tg-theme-hint-color); margin-bottom: 10px; display: block; }
-        .text-input {
-            width: 100%; border: 1px solid #e0e0e0; background: var(--tg-theme-secondary-bg-color);
-            border-radius: 12px; padding: 12px; font-size: 16px; color: var(--tg-theme-text-color);
-            resize: none; outline: none; box-sizing: border-box; font-family: inherit;
-        }
-        .text-input:focus { border-color: var(--tg-theme-button-color); }
-
-        /* === ГЛАВНАЯ КНОПКА (ВНУТРИ СТРАНИЦЫ) === */
-        .main-action-btn {
-            width: calc(100% - 30px); margin: 0 15px 20px 15px; padding: 18px;
-            background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color);
-            border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
-            text-align: center; box-shadow: 0 4px 12px rgba(36, 129, 204, 0.3);
-            display: block; /* Показываем блоком */
-        }
-        .main-action-btn:active { transform: scale(0.98); opacity: 0.9; }
-
-        /* === КРЕСТИК УДАЛЕНИЯ === */
-        .btn-delete {
-            background: rgba(255, 59, 48, 0.1); color: #ff3b30; width: 32px; height: 32px;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
+        .add-btn {
+            background: var(--tg-sec-bg); color: var(--tg-btn);
+            padding: 8px 14px; border-radius: 12px; font-weight: 600; font-size: 13px;
         }
 
-        /* === КОНТРОЛЛЕРЫ === */
-        .stepper { display: flex; align-items: center; background: var(--tg-theme-secondary-bg-color); border-radius: 12px; height: 36px; }
-        .step-btn { width: 32px; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--tg-theme-button-color); cursor: pointer; }
-        .step-val { min-width: 24px; text-align: center; font-size: 15px; font-weight: 600; }
-        .add-btn { height: 36px; padding: 0 14px; background-color: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-button-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; cursor: pointer; }
-
-        /* === НИЖНЕЕ МЕНЮ === */
-        .bottom-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 60px;
-            background-color: var(--tg-theme-bg-color); border-top: 1px solid rgba(0,0,0,0.05);
-            display: flex; justify-content: space-around; align-items: center; z-index: 500;
-            padding-bottom: env(safe-area-inset-bottom);
+        /* === BOTTOM PANEL === */
+        .bottom-panel {
+            position: fixed; bottom: 20px; left: 15px; right: 15px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: var(--glass-border);
+            border-radius: 20px; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 100;
+            transform: translateY(150%); transition: var(--anim);
         }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--tg-theme-hint-color); font-size: 11px; font-weight: 500; cursor: pointer; }
-        .nav-item.active { color: var(--tg-theme-button-color); }
-        .nav-icon { font-size: 22px; margin-bottom: 2px; }
-        .badge { position: absolute; top: 5px; margin-left: 15px; background: #ff3b30; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; display: none; }
-        .badge.visible { display: inline-block; }
+        .bottom-panel.visible { transform: translateY(0); }
+
+        .total-col { display: flex; flex-direction: column; }
+        .total-lbl { font-size: 11px; color: var(--tg-hint); text-transform: uppercase; font-weight: 700; }
+        .total-val { font-size: 20px; font-weight: 800; color: var(--tg-text); }
+
+        .order-btn {
+            background: var(--tg-btn); color: var(--tg-btn-text);
+            border: none; padding: 12px 24px; border-radius: 14px;
+            font-weight: 600; font-size: 15px;
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .order-btn:active { transform: scale(0.96); }
+
+        /* === MODAL === */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 200; opacity: 0; visibility: hidden; transition: var(--anim);
+            display: flex; align-items: flex-end;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-card {
+            background: var(--tg-bg); width: 100%;
+            border-radius: 24px 24px 0 0; padding: 25px;
+            transform: translateY(100%); transition: var(--anim);
+            max-height: 85vh; overflow-y: auto;
+        }
+        .modal-overlay.active .modal-card { transform: translateY(0); }
+
+        .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 22px; font-weight: 800; }
+        
+        .cart-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid var(--tg-sec-bg); padding-bottom: 8px; }
+        
+        .input-area {
+            width: 100%; background: var(--tg-sec-bg);
+            border: 1px solid transparent; border-radius: 16px;
+            padding: 15px; color: var(--tg-text); font-family: inherit;
+            margin: 20px 0; font-size: 15px; outline: none; resize: none;
+        }
+        .input-area:focus { border-color: var(--tg-btn); }
+
+        .send-btn {
+            width: 100%; padding: 16px; border-radius: 16px;
+            background: var(--tg-btn); color: var(--tg-btn-text);
+            border: none; font-size: 16px; font-weight: 700;
+            display: flex; justify-content: center; gap: 10px; cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: КАТАЛОГ -->
-    <div id="screen-catalog" class="tab-screen active">
-        <div class="header">
-            <h1>⚡Севастополь Электро⚡</h1>
-            <p>Выберите услуги из каталога</p>
-        </div>
-        <div class="nav-cats" id="nav-cats"></div>
-        <div class="content" id="catalog-list"></div>
+    <!-- Градиентные пятна -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h1>ЭлектроПрофи</h1>
+        <p>Калькулятор услуг • Прайс 2025</p>
     </div>
 
-    <!-- ЭКРАН 2: СМЕТА -->
-    <div id="screen-estimate" class="tab-screen">
-        <div class="header">
-            <h1>Ваша смета 📝</h1>
-            <p>Проверьте список и оформите заявку</p>
+    <!-- Поиск -->
+    <div class="search-wrap">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Поиск услуг...">
         </div>
+    </div>
 
-        <div id="estimate-content">
-            <!-- Сюда JS вставит список -->
+    <!-- Табы категорий -->
+    <div class="tabs-wrap" id="tabs-container">
+        <!-- JS -->
+    </div>
+
+    <!-- Список услуг -->
+    <div class="list-wrap" id="list-container">
+        <!-- JS -->
+    </div>
+
+    <!-- Нижняя панель -->
+    <div class="bottom-panel" id="bottom-panel">
+        <div class="total-col">
+            <span class="total-lbl">Сумма заказа</span>
+            <span class="total-val" id="total-price">0 ₽</span>
         </div>
-        
-        <!-- Блок оформления заказа (появится, если есть товары) -->
-        <div id="order-block" style="display:none;">
-            <!-- Поле комментария -->
-            <div class="input-block">
-                <label class="input-label">Комментарий к заказу (Адрес, Телефон, Время):</label>
-                <textarea id="order-comment" class="text-input" rows="3" placeholder="Пример: ул. Ленина 5, кв 10. Удобно в субботу..."></textarea>
+        <button class="order-btn" onclick="openModal()">
+            К оформлению <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <div class="modal-title">Ваш заказ ⚡</div>
+                <div onclick="closeModal()" style="font-size: 24px; color: var(--tg-hint); cursor: pointer;">&times;</div>
             </div>
             
-            <!-- Большая кнопка -->
-            <button class="main-action-btn" onclick="sendOrder()">
-                ОТПРАВИТЬ ЗАЯВКУ В Telegram
-            </button>
-        </div>
-    </div>
+            <div id="cart-details">
+                <!-- Сюда попадут товары -->
+            </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
-    <div class="bottom-bar">
-        <div class="nav-item active" onclick="switchTab('catalog')">
-            <div class="nav-icon">📋</div>
-            <div>Каталог</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('estimate')" style="position: relative;">
-            <div class="nav-icon">💰</div>
-            <div>Смета</div>
-            <div class="badge" id="cart-badge">0</div>
+            <textarea class="input-area" id="order-comment" rows="3" placeholder="Комментарий (Адрес, телефон, время)..."></textarea>
+            
+            <button class="send-btn" onclick="sendOrder()">
+                <i class="fa-brands fa-telegram"></i> Отправить в Telegram
+            </button>
         </div>
     </div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
-    
-    // Переменные цветов для совместимости
-    const themeParams = tg.themeParams;
-    const btnColor = themeParams.button_color || "#2481cc";
-    const btnText = themeParams.button_text_color || "#ffffff";
-    
-    tg.MainButton.textColor = btnText;
-    tg.MainButton.color = btnColor;
+    tg.expand(); // Развернуть на весь экран
 
-    // ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КНОПКИ В CSS ЧЕРЕЗ JS (для цвета темы)
-    document.documentElement.style.setProperty('--tg-theme-button-color', btnColor);
-    document.documentElement.style.setProperty('--tg-theme-button-text-color', btnText);
+    // Определяем тему для коррекции стилей
+    if (tg.colorScheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
 
-    // == БАЗА ДАННЫХ ==
-    const database = [
+    // === ПОЛНЫЙ СПИСОК УСЛУГ ===
+    const services = [
         {
             id: "finish",
-            title: "Чистовая электрика",
+            title: "Чистовая",
+            icon: "fa-plug",
             items: [
-                { id: 1, name: "Установка розетки / выключателя (в подрозетник)", price: 350, unit: "шт" },
-                { id: 2, name: "Установка накладной розетки (открытая)", price: 450, unit: "шт" },
-                { id: 3, name: "Подключение варочной панели (1ф/3ф)", price: 1200, unit: "шт" },
-                { id: 4, name: "Подключение дух. шкафа", price: 1000, unit: "шт" },
-                { id: 5, name: "Установка силовой розетки 380В (3 фазы)", price: 1500, unit: "шт" },
-                { id: 6, name: "Монтаж терморегулятора теплого пола", price: 600, unit: "шт" }
+                { id: 1, name: "Розетка / выключатель (в подрозетник)", price: 350, unit: "шт" },
+                { id: 2, name: "Накладная розетка (открытая)", price: 450, unit: "шт" },
+                { id: 3, name: "Варочная панель (1ф/3ф)", price: 1200, unit: "шт" },
+                { id: 4, name: "Духовой шкаф", price: 1000, unit: "шт" },
+                { id: 5, name: "Розетка 380В (силовая)", price: 1500, unit: "шт" },
+                { id: 6, name: "Терморегулятор теплого пола", price: 600, unit: "шт" }
             ]
         },
         {
             id: "light",
-            title: "Освещение & LED",
+            title: "Освещение",
+            icon: "fa-lightbulb",
             items: [
-                { id: 10, name: "Монтаж люстры (крюк/планка)", price: 1500, unit: "шт" },
-                { id: 11, name: "Светильник 'Армстронг' / Офисный", price: 500, unit: "шт" },
-                { id: 12, name: "Точечный светильник (врезка+подкл.)", price: 450, unit: "шт" },
-                { id: 13, name: "LED лента (монтаж в профиль)", price: 450, unit: "м" },
+                { id: 10, name: "Люстра (крюк/планка)", price: 1500, unit: "шт" },
+                { id: 11, name: "Светильник 'Армстронг'", price: 500, unit: "шт" },
+                { id: 12, name: "Точечный светильник", price: 450, unit: "шт" },
+                { id: 13, name: "LED лента (в профиль)", price: 450, unit: "м" },
                 { id: 14, name: "LED лента (наклейка)", price: 300, unit: "м" },
-                { id: 15, name: "Монтаж блока питания / драйвера", price: 800, unit: "шт" }
+                { id: 15, name: "Блок питания / драйвер", price: 800, unit: "шт" }
             ]
         },
         {
             id: "diag",
             title: "Диагностика",
+            icon: "fa-bolt",
             items: [
                 { id: 20, name: "Поиск неисправности (мин. выезд)", price: 3000, unit: "усл." },
-                { id: 21, name: "Ремонт обрыва в стене (без отделки)", price: 1500, unit: "точка" },
+                { id: 21, name: "Ремонт обрыва в стене", price: 1500, unit: "точка" },
                 { id: 22, name: "Переборка распаечной коробки", price: 1200, unit: "шт" }
             ]
         },
         {
             id: "rough",
-            title: "Черновые работы",
+            title: "Черновые",
+            icon: "fa-hammer",
             items: [
                 { id: 30, name: "Штробление (бетон)", price: 600, unit: "м" },
                 { id: 31, name: "Штробление (кирпич/блок)", price: 400, unit: "м" },
@@ -237,10 +331,11 @@
         },
         {
             id: "shield",
-            title: "Щит и Автоматика",
+            title: "Щит",
+            icon: "fa-server",
             items: [
-                { id: 40, name: "Установка автомата 1П", price: 350, unit: "шт" },
-                { id: 41, name: "Установка УЗО / Диф.автомата", price: 600, unit: "шт" },
+                { id: 40, name: "Автомат 1П", price: 350, unit: "шт" },
+                { id: 41, name: "УЗО / Диф.автомат", price: 600, unit: "шт" },
                 { id: 42, name: "Кросс-модуль / Шины", price: 800, unit: "шт" },
                 { id: 43, name: "Монтаж счетчика", price: 1500, unit: "шт" }
             ]
@@ -248,214 +343,184 @@
     ];
 
     let cart = {};
-    let currentTab = 'catalog';
 
-    // === ИНИЦИАЛИЗАЦИЯ ===
     function init() {
-        const catContainer = document.getElementById('nav-cats');
-        const listContainer = document.getElementById('catalog-list');
+        const tabsCont = document.getElementById('tabs-container');
+        const listCont = document.getElementById('list-container');
 
-        database.forEach((cat, index) => {
-            // Кнопки категорий
-            const btn = document.createElement('button');
-            btn.className = `cat-btn ${index === 0 ? 'active' : ''}`;
-            btn.innerText = cat.title;
-            btn.onclick = () => {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        services.forEach((cat, idx) => {
+            // 1. Создание Таба
+            const tab = document.createElement('div');
+            tab.className = `tab-btn ${idx === 0 ? 'active' : ''}`;
+            tab.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ${cat.title}`;
+            tab.onclick = () => {
+                document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
                 document.getElementById(`cat-${cat.id}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
             };
-            catContainer.appendChild(btn);
+            tabsCont.appendChild(tab);
 
-            // Секции
-            const section = document.createElement('div');
-            section.id = `cat-${cat.id}`;
-            section.innerHTML = `<div class="section-title">${cat.title}</div>`;
-            
+            // 2. Создание Блока категории
+            const catBlock = document.createElement('div');
+            catBlock.className = 'category-block';
+            catBlock.id = `cat-${cat.id}`;
+            catBlock.innerHTML = `<div class="cat-title">${cat.title}</div>`;
+
             cat.items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-info">
-                        <div class="card-title">${item.name}</div>
-                        <div class="card-price">${item.price} ₽ <span class="card-unit">/ ${item.unit}</span></div>
+                const itemEl = document.createElement('div');
+                itemEl.className = 'item-card';
+                itemEl.id = `card-${item.id}`;
+                itemEl.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div>
+                            <span class="item-price">${item.price} ₽</span> 
+                            <span class="item-unit">/ ${item.unit}</span>
+                        </div>
                     </div>
                     <div id="ctrl-${item.id}">
-                        ${renderControl(item.id)}
+                        <div class="add-btn" onclick="update(${item.id}, 1)">Добавить</div>
                     </div>
                 `;
-                section.appendChild(card);
+                catBlock.appendChild(itemEl);
             });
-            listContainer.appendChild(section);
+
+            listCont.appendChild(catBlock);
         });
-    }
-
-    // === УПРАВЛЕНИЕ ВКЛАДКАМИ ===
-    window.switchTab = function(tabName) {
-        currentTab = tabName;
-        document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${tabName}`).classList.add('active');
-        
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        const navIndex = tabName === 'catalog' ? 0 : 1;
-        document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
-
-        if (tabName === 'estimate') renderEstimate();
-        updateMainButton();
-    }
-
-    // === ОТРИСОВКА СМЕТЫ ===
-    function renderEstimate() {
-        const container = document.getElementById('estimate-content');
-        const orderBlock = document.getElementById('order-block');
-        let total = 0;
-        let html = '';
-        let hasItems = false;
-
-        database.forEach(cat => {
-            cat.items.forEach(item => {
-                if (cart[item.id] > 0) {
-                    hasItems = true;
-                    const sum = cart[item.id] * item.price;
-                    total += sum;
-                    html += `
-                    <div class="card">
-                        <div class="card-info">
-                            <div class="card-title">${item.name}</div>
-                            <div class="card-price">${cart[item.id]} ${item.unit} × ${item.price} = <b>${sum} ₽</b></div>
-                        </div>
-                        <div class="btn-delete" onclick="removeItem(${item.id})">✕</div>
-                    </div>`;
-                }
-            });
-        });
-
-        if (!hasItems) {
-            container.innerHTML = `<div class="estimate-empty">
-                <h3>Смета пуста 😕</h3>
-                <p>Добавьте услуги в каталоге</p>
-            </div>`;
-            orderBlock.style.display = 'none';
-        } else {
-            const totalBlock = `
-            <div class="estimate-total">
-                <div style="font-size:13px; color:#888;">Итоговая стоимость:</div>
-                <div class="total-sum">${total.toLocaleString('ru-RU')} ₽</div>
-            </div>`;
-            container.innerHTML = totalBlock + '<div class="content">' + html + '</div>';
-            orderBlock.style.display = 'block'; // Показываем форму и кнопку
-        }
     }
 
     // === ЛОГИКА ===
-    function renderControl(id) {
-        const qty = cart[id] || 0;
-        if (qty === 0) return `<div class="add-btn" onclick="update(${id}, 1)">Добавить</div>`;
-        return `
-            <div class="stepper">
-                <div class="step-btn" onclick="update(${id}, -1)">−</div>
-                <div class="step-val">${qty}</div>
-                <div class="step-btn" onclick="update(${id}, 1)">+</div>
-            </div>`;
-    }
-
     window.update = function(id, delta) {
-        tg.HapticFeedback.impactOccurred('light');
+        // Вибрация при нажатии (только в мобильном приложении)
+        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
         if (!cart[id]) cart[id] = 0;
         cart[id] += delta;
         if (cart[id] <= 0) delete cart[id];
 
-        const ctrl = document.getElementById(`ctrl-${id}`);
-        if (ctrl) ctrl.innerHTML = renderControl(id);
-
-        if (currentTab === 'estimate') renderEstimate();
-        updateMainButton();
-        updateBadge();
-    };
-
-    window.removeItem = function(id) {
-        tg.HapticFeedback.notificationOccurred('warning');
-        delete cart[id];
-        const ctrl = document.getElementById(`ctrl-${id}`);
-        if (ctrl) ctrl.innerHTML = renderControl(id);
-        renderEstimate();
-        updateMainButton();
-        updateBadge();
+        renderCtrl(id);
+        renderTotal();
     }
 
-    function updateBadge() {
-        const count = Object.values(cart).reduce((a, b) => a + b, 0);
-        const badge = document.getElementById('cart-badge');
-        badge.innerText = count;
-        if (count > 0) badge.classList.add('visible'); else badge.classList.remove('visible');
+    function renderCtrl(id) {
+        const ctrlDiv = document.getElementById(`ctrl-${id}`);
+        const cardDiv = document.getElementById(`card-${id}`);
+        const qty = cart[id] || 0;
+
+        if (qty === 0) {
+            ctrlDiv.innerHTML = `<div class="add-btn" onclick="update(${id}, 1)">Добавить</div>`;
+            cardDiv.classList.remove('has-qty');
+        } else {
+            ctrlDiv.innerHTML = `
+                <div class="ctrl">
+                    <button class="ctrl-btn" onclick="update(${id}, -1)">−</button>
+                    <div class="ctrl-val">${qty}</div>
+                    <button class="ctrl-btn" onclick="update(${id}, 1)">+</button>
+                </div>
+            `;
+            cardDiv.classList.add('has-qty');
+        }
     }
 
-    function updateMainButton() {
+    function renderTotal() {
         let total = 0;
-        database.forEach(cat => cat.items.forEach(i => {
+        services.forEach(cat => cat.items.forEach(i => {
             if (cart[i.id]) total += cart[i.id] * i.price;
         }));
 
-        if (total === 0) {
-            tg.MainButton.hide();
-            return;
-        }
+        const panel = document.getElementById('bottom-panel');
+        const priceEl = document.getElementById('total-price');
 
-        // Системная кнопка Telegram (дублирует функционал)
-        if (currentTab === 'catalog') {
-            tg.MainButton.setText(`В КОРЗИНУ: ${total.toLocaleString()} ₽`);
-            tg.MainButton.show();
-            tg.MainButton.onClick(() => switchTab('estimate'));
+        if (total > 0) {
+            panel.classList.add('visible');
+            priceEl.innerText = total.toLocaleString('ru-RU') + ' ₽';
         } else {
-            tg.MainButton.setText(`ОТПРАВИТЬ ЗАЯВКУ`);
-            tg.MainButton.show();
-            // Удаляем старые слушатели и ставим новый
-            tg.MainButton.offClick(switchTab); 
-            tg.MainButton.onClick(sendOrder);
+            panel.classList.remove('visible');
         }
     }
 
-    
-  // === ОТПРАВКА ЗАКАЗА В TELEGRAM (ЛИЧКУ) ===
+    // === МОДАЛКА И ОТПРАВКА ===
+    window.openModal = function() {
+        const modal = document.getElementById('modal');
+        const content = document.getElementById('cart-details');
+        modal.classList.add('active');
+        
+        // Рендер корзины внутри модалки
+        let html = '';
+        let total = 0;
+        services.forEach(cat => {
+            cat.items.forEach(item => {
+                if (cart[item.id]) {
+                    const sum = cart[item.id] * item.price;
+                    total += sum;
+                    html += `
+                    <div class="cart-row">
+                        <div style="flex:1; padding-right:10px;">
+                            ${item.name} <br>
+                            <span style="color:var(--tg-hint); font-size:12px;">${cart[item.id]} ${item.unit} x ${item.price}</span>
+                        </div>
+                        <div style="font-weight:700;">${sum} ₽</div>
+                    </div>`;
+                }
+            });
+        });
+        html += `<div style="text-align:right; font-size:18px; font-weight:800; margin-top:15px; border-top:1px solid var(--tg-sec-bg); padding-top:10px;">Итого: ${total.toLocaleString()} ₽</div>`;
+        content.innerHTML = html;
+    }
+
+    window.closeModal = function() {
+        document.getElementById('modal').classList.remove('active');
+    }
+
     window.sendOrder = function() {
         const comment = document.getElementById('order-comment').value;
-        
-        let msg = "⚡ Новая заявка на электромонтаж:\n\n";
+        const myUsername = "Llosta"; // <--- ЗАМЕНИТЕ НА СВОЙ ЮЗЕРНЕЙМ (без @)
+
+        let msg = "⚡ Заказ (Mini App):\n\n";
         let total = 0;
-        database.forEach(cat => {
-            const items = cat.items.filter(i => cart[i.id]);
-            if (items.length) {
-                msg += `🔹 ${cat.title}:\n`;
-                items.forEach(i => {
-                    const sum = cart[i.id] * i.price;
+
+        services.forEach(cat => {
+            cat.items.forEach(item => {
+                if (cart[item.id]) {
+                    const sum = cart[item.id] * item.price;
                     total += sum;
-                    msg += `- ${i.name}: ${cart[i.id]} ${i.unit} (${sum}₽)\n`;
-                });
-            }
+                    msg += `▫️ ${item.name}: ${cart[item.id]} ${item.unit} (${sum}₽)\n`;
+                }
+            });
         });
-        
+
         msg += `\n💰 ИТОГО: ${total.toLocaleString()} руб.`;
-        
-        if (comment) {
-            msg += `\n\n💬 Комментарий клиента:\n${comment}`;
-        }
-        
-        // --- НАСТРОЙКИ ---
-        // Впишите сюда ваш НИК в Telegram (без собачки @)
-        // Например, если ваш ник @electric_master, пишите просто "electric_master"
-        const myUsername = "Llosta"; 
-        
-        // Формируем ссылку
+        if (comment) msg += `\n\n📝 Коммент: ${comment}`;
+
         const url = `https://t.me/${myUsername}?text=${encodeURIComponent(msg)}`;
         
-        // Закрываем мини-приложение и открываем чат с вами
         tg.close();
-        
-        // Используем специальный метод Telegram для открытия ссылок внутри приложения
         tg.openTelegramLink(url);
     }
 
+    // === ПОИСК ===
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase();
+        document.querySelectorAll('.item-card').forEach(card => {
+            const text = card.querySelector('.item-name').innerText.toLowerCase();
+            if (text.includes(val)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Скрываем пустые категории
+        document.querySelectorAll('.category-block').forEach(block => {
+            const visibleItems = block.querySelectorAll('.item-card[style="display: flex;"]');
+            // Если поиск пуст, показываем всё, иначе проверяем видимые элементы
+            if (val === '') block.style.display = 'block';
+            else block.style.display = visibleItems.length > 0 ? 'block' : 'none';
+        });
+    });
+
     init();
+
 </script>
 </body>
 </html>
